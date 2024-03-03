@@ -1,60 +1,72 @@
+import schedule
+import time
+import json
+
 from selenium import webdriver
+from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import schedule
-import time
 
-def check_in():
+def check_in(config, username, password):
     driver = webdriver.Chrome()
-    driver.get("https://www.southwest.com/")
+    driver.get(config['loginURL'])
 
     # Define the maximum amount of time to wait (in seconds)
     max_wait_time = 10
-    loginFormButtonXPATH = "//button[@id = 'login-form--submit-button']"
-    loginButtonXPATH =  '//div[@class="flyout-trigger header-control--login-button-trigger"]/button'
-    usernameBoxXPATH =  "//input[@id='username']"
-    passwordBoxXPATH =  "//input[@id='password']"
 
+    # Click the log in button
     loginButton = WebDriverWait(driver, max_wait_time).until(
-        EC.element_to_be_clickable((By.XPATH, loginButtonXPATH))
+        EC.element_to_be_clickable((By.LINK_TEXT, "Log in"))
     )
-
     loginButton.click()
 
+    # Wait until username box is visible
     usernameBox = WebDriverWait(driver, max_wait_time).until(
-        EC.visibility_of_element_located((By.XPATH, usernameBoxXPATH))
+        EC.visibility_of_element_located((By.XPATH, config['usernameBoxXPATH']))
     )
-    #usernameBox.click()
-    usernameBox.send_keys("jackcoon4")
+    # Enter username data
+    usernameBox.send_keys(username)
 
+    # Wait until password box is visible
     passwordBox = WebDriverWait(driver, max_wait_time).until(
-        EC.visibility_of_element_located((By.XPATH, passwordBoxXPATH))
+        EC.visibility_of_element_located((By.XPATH, config['passwordBoxXPATH']))
     )
-    #passwordBox.click()
-    passwordBox.send_keys("Kate3456")
-
+    # Enter password data
+    passwordBox.send_keys(password)
 
     # Wait until the element is clickable
     loginFormButton = WebDriverWait(driver, max_wait_time).until(
-        EC.element_to_be_clickable((By.XPATH, loginFormButtonXPATH))
+        EC.element_to_be_clickable((By.XPATH, config['loginFormButtonXPATH']))
     )
 
-    # Once the element is clickable, you can perform the click action
+    # Perform the click action
     loginFormButton.click()
-
+    
+    my_account_link = WebDriverWait(driver, max_wait_time).until(
+        EC.visibility_of_element_located((By.LINK_TEXT, "My Account")))
+    
+    # Click the link
+    my_account_link.click()
+    
     driver.quit()
 
 
-def run():
-    # Your flight check-in code here
-    check_in
-
-
 if __name__ == "__main__":
-    # Schedule the task for 24 hours before your flight
-    schedule.every().day.at("15:18").do(run)
+   
+    with open('/Users/jackcoon/Documents/Python/SWBot/config.json', 'r') as file:
+        config = json.load(file)
+
+    print("Which user do you want to log in?")
+    user = input().upper()
+    
+    username = config["users"][user]["username"]
+    password = config["users"][user]["password"]
+
+    target_time = datetime.now() + timedelta(minutes=1)
+
+    schedule.every().day.at('1:11').do(lambda: check_in(config=config, username=username, password=password))
 
     while True:
         schedule.run_pending()
-        time.sleep(30)  # Check every minute
+        time.sleep(1) #polling check

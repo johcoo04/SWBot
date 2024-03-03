@@ -1,0 +1,28 @@
+{
+    "users": {
+        "KATIE": {
+            "username": "username",
+            "password": "password"
+        },
+        "JACK": {
+            "username": "username",
+            "password": "password"
+        },
+        "STEPH": {
+            "username": "username",
+            "password": "password"
+        },
+        "ROB": {
+            "username": "username",
+            "password": "password"
+        }
+    },
+
+    "loginURL": "https://www.southwest.com/",
+    "loginButtonXPATH": "//div[@class='flyout-trigger header-control--login-button-trigger']/button",
+    "usernameBoxXPATH": "//input[@id='username']",
+    "passwordBoxXPATH": "//input[@id='password']",
+    "loginFormButtonXPATH": "//button[@id = 'login-form--submit-button']"
+    
+
+}
