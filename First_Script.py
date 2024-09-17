@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     target_time = datetime.now() + timedelta(minutes=1)
 
-    schedule.every().day.at('1:11').do(lambda: check_in(config=config, username=username, password=password))
+    schedule.every().day.at('10:13').do(lambda: check_in(config=config, username=username, password=password))
 
     while True:
         schedule.run_pending()
